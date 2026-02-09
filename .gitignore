@@ -1,0 +1,33 @@
+# Data (too large for git)
+data/
+*.npy
+*.npz
+
+# Model checkpoints (too large for git)
+results/checkpoints/
+*.pth
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.eggs/
+*.egg-info/
+
+# Environment
+.env
+.venv/
+venv/
+*.conda
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
