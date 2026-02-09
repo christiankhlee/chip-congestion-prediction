@@ -1,4 +1,4 @@
-# 🔌 Predicting Routing Congestion in Chip Design with Deep Learning
+# Predicting Routing Congestion in Chip Design with Deep Learning
 
 <p align="center">
   <img src="results/data_exploration_sample.png" width="90%">
@@ -10,7 +10,7 @@ This project uses deep learning to predict routing congestion from placement-sta
 
 ---
 
-## 📌 The Problem
+## The Problem
 
 In modern chip (VLSI) design, **routing congestion** is one of the biggest bottlenecks. After millions of logic gates are placed on a chip, wires must be routed to connect them. When too many wires compete for the same physical space, congestion occurs — leading to timing violations, design rule violations, and costly re-spins of the design cycle.
 
@@ -18,7 +18,7 @@ Traditional EDA tools detect congestion by running **global routing**, which can
 
 **The idea:** Train a neural network to predict the congestion map directly from placement-stage features. If it works, we get congestion estimates in **milliseconds instead of hours** — enabling rapid design space exploration.
 
-## 🏗️ Approach
+## Approach
 
 ### Input Features (3 channels, 256×256)
 
@@ -41,7 +41,7 @@ Combined horizontal + vertical routing overflow from global routing — the grou
 | **GPDL FCN** | Encoder-decoder, no skip connections | 25M | Replicates the [GPDL paper](https://arxiv.org/abs/2106.08626) baseline |
 | **ViT** | Vision Transformer + CNN decoder | 12M | Global self-attention captures chip-wide spatial relationships |
 
-## 📊 Results
+## Results
 
 ### Model Comparison
 
@@ -76,7 +76,7 @@ Combined horizontal + vertical routing overflow from global routing — the grou
 
 The model correctly identifies congestion hotspots around macro boundaries and in areas with high routing demand. Errors are concentrated in fine-grained details.
 
-## 🔍 Feature Importance Analysis
+## Feature Importance Analysis
 
 Understanding *which placement features matter most* for congestion prediction is as valuable as the prediction itself — it tells chip designers where to focus optimization effort.
 
@@ -104,7 +104,7 @@ RUDY_pin (24.6%) captures where connection demand is concentrated. Plain RUDY (3
 
 Gradient saliency confirms the ablation findings: the model attends most strongly to macro_region (saliency: 0.260) and RUDY_pin (0.196), with minimal attention to RUDY (0.031).
 
-## 🚀 Practical Impact
+## Practical Impact
 
 | Approach | Runtime | Accuracy |
 |----------|---------|----------|
@@ -113,7 +113,7 @@ Gradient saliency confirms the ablation findings: the model attends most strongl
 
 That's a **~360,000× speedup** — enabling real-time congestion feedback during the placement stage, when changes are still cheap to make.
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 congestion_prediction/
