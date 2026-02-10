@@ -49,18 +49,21 @@ Combined horizontal + vertical routing overflow from global routing — the grou
   <img src="results/model_comparison.png" width="90%">
 </p>
 
-| Model | NRMSE ↓ | SSIM ↑ | Pearson R ↑ | Training Time |
-|-------|---------|--------|-------------|---------------|
-| SimpleCNN | 0.0489 | 0.6201 | 0.5011 | 411 min |
-| U-Net | 0.0489 | 0.6193 | **0.5016** | 1295 min |
-| GPDL FCN | **0.0488** | 0.6101 | 0.4006 | 113 min |
-| **ViT** | 0.0492 | **0.6268** | 0.4724 | **65 min** |
+| Model | NRMSE ↓ | SSIM ↑ | Pearson R ↑ | Params | Time/Epoch | Epochs | Total Time* |
+|-------|---------|--------|-------------|--------|-----------|--------|-------------|
+| SimpleCNN | 0.0489 | 0.6201 | 0.5011 | 186K | ~8 min | 50 | ~400 min |
+| U-Net | 0.0489 | 0.6193 | **0.5016** | 31M | ~18 min | 37 | ~666 min |
+| GPDL FCN | **0.0488** | 0.6101 | 0.4006 | 25M | ~4.5 min | 22 | ~99 min |
+| **ViT** | 0.0492 | **0.6268** | 0.4724 | 12M | **~3.2 min** | 18 | **~58 min** |
+
+*\*Trained on Apple M-series GPU (MPS). Total time = time/epoch × epochs trained before early stopping.*
 
 **Key findings:**
-- **ViT achieves the best structural similarity (SSIM = 0.6268)** while being the fastest to train — self-attention captures global chip-level spatial patterns that CNNs miss.
+- **ViT achieves the best structural similarity (SSIM = 0.6268)** while being the fastest to train at just 3.2 min/epoch — self-attention captures global chip-level spatial patterns that CNNs miss.
 - **SimpleCNN matches U-Net's Pearson R** with 166× fewer parameters (186K vs 31M), suggesting skip connections provide limited benefit for this task.
 - **GPDL FCN has the worst Pearson R (0.40)** — without skip connections, it loses fine spatial detail in the decoder.
 - All models achieve **NRMSE ~0.049**, indicating the task has a performance floor with these features.
+- **ViT is 5.6× faster per epoch than U-Net** despite having comparable accuracy, making it the best efficiency–performance tradeoff.
 
 ### Training Curves
 
@@ -106,12 +109,13 @@ Gradient saliency confirms the ablation findings: the model attends most strongl
 
 ## Practical Impact
 
-| Approach | Runtime | Accuracy |
-|----------|---------|----------|
+| Approach | Runtime per Design | Accuracy |
+|----------|-------------------|----------|
 | Traditional Global Routing | 30–120 min | Ground truth |
-| **Neural Network (this project)** | **~5 ms** | NRMSE 0.049 |
+| **Neural Network Inference** | **~5 ms** | NRMSE 0.049, SSIM 0.63 |
+| Neural Network Training (one-time) | ~1–11 hrs on laptop GPU | — |
 
-That's a **~360,000× speedup** — enabling real-time congestion feedback during the placement stage, when changes are still cheap to make.
+Neural network inference is **~360,000× faster** than traditional global routing — enabling real-time congestion feedback during the placement stage, when design changes are still cheap to make. Training is a one-time cost.
 
 ## Project Structure
 
@@ -137,7 +141,7 @@ congestion_prediction/
 └── README.md
 ```
 
-## ⚙️ Setup & Reproduction
+## Setup & Reproduction
 
 ### 1. Environment
 
@@ -180,13 +184,13 @@ python src/feature_importance.py --model unet
 python src/visualize.py --model vit
 ```
 
-## 📚 References
+## References
 
 - **CircuitNet:** Chai et al., "CircuitNet: An Open-Source Dataset for Machine Learning in VLSI CAD" (2022). [Paper](https://arxiv.org/abs/2208.01040) | [Website](https://circuitnet.github.io/)
 - **GPDL:** Lin et al., "Global Placement with Deep Learning-Enabled Explicit Routability Optimization" (2021). [Paper](https://arxiv.org/abs/2106.08626)
 - **U-Net:** Ronneberger et al., "U-Net: Convolutional Networks for Biomedical Image Segmentation" (2015). [Paper](https://arxiv.org/abs/1505.04597)
 - **ViT:** Dosovitskiy et al., "An Image is Worth 16x16 Words" (2020). [Paper](https://arxiv.org/abs/2010.11929)
 
-## 📄 License
+## License
 
 MIT License
