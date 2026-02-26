@@ -1,4 +1,4 @@
-# 🔌 Predicting Routing Congestion in Chip Design with Deep Learning
+# Predicting Routing Congestion in Chip Design with Deep Learning
 
 <p align="center">
   <img src="results/data_exploration_sample.png" width="90%">
@@ -10,7 +10,7 @@ This project uses deep learning to predict routing congestion from placement-sta
 
 ---
 
-## 📌 The Problem
+## The Problem
 
 In modern chip (VLSI) design, **routing congestion** is one of the biggest bottlenecks. After millions of logic gates are placed on a chip, wires must be routed to connect them. When too many wires compete for the same physical space, congestion occurs — leading to timing violations, design rule violations, and costly re-spins of the design cycle.
 
@@ -18,7 +18,7 @@ Traditional EDA tools detect congestion by running **global routing**, which can
 
 **The idea:** Train a neural network to predict the congestion map directly from placement-stage features. If it works, we get congestion estimates in **milliseconds instead of hours** — enabling rapid design space exploration.
 
-## 🏗️ Approach
+## Approach
 
 ### Input Features (3 channels, 256×256)
 
@@ -42,7 +42,7 @@ Combined horizontal + vertical routing overflow from global routing — the grou
 | **ViT** | Vision Transformer + CNN decoder | 12M | Global self-attention captures chip-wide spatial relationships |
 | **Attention U-Net** | U-Net + Transformer bottleneck | 36M | **Novel hybrid** — skip connections for local detail + self-attention for global context |
 
-## 📊 Results
+## Results
 
 ### Model Comparison
 
@@ -82,7 +82,7 @@ Combined horizontal + vertical routing overflow from global routing — the grou
 
 The model correctly identifies congestion hotspots around macro boundaries and in areas with high routing demand. Errors are concentrated in fine-grained details.
 
-## 🔍 Feature Importance Analysis
+## Feature Importance Analysis
 
 Understanding *which placement features matter most* for congestion prediction is as valuable as the prediction itself — it tells chip designers where to focus optimization effort.
 
@@ -110,7 +110,7 @@ RUDY_pin (24.6%) captures where connection demand is concentrated. Plain RUDY (3
 
 Gradient saliency confirms the ablation findings: the model attends most strongly to macro_region (saliency: 0.260) and RUDY_pin (0.196), with minimal attention to RUDY (0.031).
 
-## 🚀 Practical Impact
+## Practical Impact
 
 | Approach | Runtime per Design | Accuracy |
 |----------|-------------------|----------|
@@ -120,7 +120,7 @@ Gradient saliency confirms the ablation findings: the model attends most strongl
 
 Neural network inference is **~360,000× faster** than traditional global routing — enabling real-time congestion feedback during the placement stage, when design changes are still cheap to make. Training is a one-time cost.
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 congestion_prediction/
@@ -145,7 +145,7 @@ congestion_prediction/
 └── README.md
 ```
 
-## ⚙️ Setup & Reproduction
+## Setup & Reproduction
 
 ### 1. Environment
 
@@ -188,13 +188,13 @@ python src/feature_importance.py --model unet
 python src/visualize.py --model vit
 ```
 
-## 📚 References
+## References
 
 - **CircuitNet:** Chai et al., "CircuitNet: An Open-Source Dataset for Machine Learning in VLSI CAD" (2022). [Paper](https://arxiv.org/abs/2208.01040) | [Website](https://circuitnet.github.io/)
 - **GPDL:** Lin et al., "Global Placement with Deep Learning-Enabled Explicit Routability Optimization" (2021). [Paper](https://arxiv.org/abs/2106.08626)
 - **U-Net:** Ronneberger et al., "U-Net: Convolutional Networks for Biomedical Image Segmentation" (2015). [Paper](https://arxiv.org/abs/1505.04597)
 - **ViT:** Dosovitskiy et al., "An Image is Worth 16x16 Words" (2020). [Paper](https://arxiv.org/abs/2010.11929)
 
-## 📄 License
+## License
 
 MIT License
