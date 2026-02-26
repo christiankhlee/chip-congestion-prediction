@@ -47,7 +47,7 @@ Combined horizontal + vertical routing overflow from global routing — the grou
 ### Model Comparison
 
 <p align="center">
-  <img src="results/model_comparison.png" width="90%">
+  <img src="results/model_comparison_with_attention.png" width="90%">
 </p>
 
 | Model | NRMSE ↓ | SSIM ↑ | Pearson R ↑ | Params | Time/Epoch | Epochs | Total Time* |
@@ -73,6 +73,8 @@ Combined horizontal + vertical routing overflow from global routing — the grou
 <p align="center">
   <img src="results/training_curves.png" width="85%">
 </p>
+
+*Note: Training curves shown for the initial 4 models. The Attention U-Net converged at epoch 19 with a similar loss trajectory to U-Net.*
 
 ### Predicted vs. Actual Congestion Maps
 
