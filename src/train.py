@@ -48,7 +48,7 @@ def train_model(model, model_name="model", num_epochs=NUM_EPOCHS,
     optimizer = Adam(model.parameters(), lr=lr, weight_decay=WEIGHT_DECAY)
     scheduler = ReduceLROnPlateau(
         optimizer, mode='min', patience=SCHEDULER_PATIENCE,
-        factor=0.5, verbose=True
+        factor=0.5
     )
     
     # Training history
@@ -157,7 +157,7 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, default='simple_cnn',
-                        choices=['simple_cnn', 'unet', 'gpdl_fcn', 'vit'])
+                        choices=['simple_cnn', 'unet', 'gpdl_fcn', 'vit', 'attention_unet'])
     parser.add_argument('--epochs', type=int, default=NUM_EPOCHS)
     parser.add_argument('--lr', type=float, default=LEARNING_RATE)
     parser.add_argument('--device', type=str, default=None)
@@ -187,6 +187,9 @@ if __name__ == "__main__":
     elif args.model == 'vit':
         from src.models.vit_model import ViTCongestion
         model = ViTCongestion(in_channels=NUM_INPUT_CHANNELS, out_channels=NUM_OUTPUT_CHANNELS)
+    elif args.model == 'attention_unet':
+        from src.models.attention_unet import AttentionUNet
+        model = AttentionUNet(in_channels=NUM_INPUT_CHANNELS, out_channels=NUM_OUTPUT_CHANNELS)    
     
     train_model(model, model_name=args.model, num_epochs=args.epochs,
                 lr=args.lr, device=args.device)

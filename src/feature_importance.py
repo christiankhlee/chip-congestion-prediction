@@ -162,7 +162,7 @@ def plot_saliency_maps(saliency, save_path=None):
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', default='unet', choices=['simple_cnn', 'unet', 'gpdl_fcn', 'vit'])
+    parser.add_argument('--model', default='unet', choices=['simple_cnn', 'unet', 'gpdl_fcn', 'vit', 'attention_unet'])
     parser.add_argument('--device', default=None)
     args = parser.parse_args()
     
@@ -187,6 +187,9 @@ if __name__ == "__main__":
     elif args.model == 'vit':
         from src.models.vit_model import ViTCongestion
         model = ViTCongestion(NUM_INPUT_CHANNELS, NUM_OUTPUT_CHANNELS)
+    elif args.model == 'attention_unet':
+        from src.models.attention_unet import AttentionUNet
+        model = AttentionUNet(in_channels=NUM_INPUT_CHANNELS, out_channels=NUM_OUTPUT_CHANNELS)   
     
     # Load trained weights
     ckpt_path = os.path.join(CHECKPOINT_DIR, f"{args.model}_best.pth")

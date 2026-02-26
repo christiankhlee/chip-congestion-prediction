@@ -1,4 +1,4 @@
-# Predicting Routing Congestion in Chip Design with Deep Learning
+# 🔌 Predicting Routing Congestion in Chip Design with Deep Learning
 
 <p align="center">
   <img src="results/data_exploration_sample.png" width="90%">
@@ -10,7 +10,7 @@ This project uses deep learning to predict routing congestion from placement-sta
 
 ---
 
-## The Problem
+## 📌 The Problem
 
 In modern chip (VLSI) design, **routing congestion** is one of the biggest bottlenecks. After millions of logic gates are placed on a chip, wires must be routed to connect them. When too many wires compete for the same physical space, congestion occurs — leading to timing violations, design rule violations, and costly re-spins of the design cycle.
 
@@ -18,7 +18,7 @@ Traditional EDA tools detect congestion by running **global routing**, which can
 
 **The idea:** Train a neural network to predict the congestion map directly from placement-stage features. If it works, we get congestion estimates in **milliseconds instead of hours** — enabling rapid design space exploration.
 
-## Approach
+## 🏗️ Approach
 
 ### Input Features (3 channels, 256×256)
 
@@ -40,8 +40,9 @@ Combined horizontal + vertical routing overflow from global routing — the grou
 | **U-Net** | Encoder-decoder + skip connections | 31M | Multi-scale features with fine-grained spatial detail |
 | **GPDL FCN** | Encoder-decoder, no skip connections | 25M | Replicates the [GPDL paper](https://arxiv.org/abs/2106.08626) baseline |
 | **ViT** | Vision Transformer + CNN decoder | 12M | Global self-attention captures chip-wide spatial relationships |
+| **Attention U-Net** | U-Net + Transformer bottleneck | 36M | **Novel hybrid** — skip connections for local detail + self-attention for global context |
 
-## Results
+## 📊 Results
 
 ### Model Comparison
 
@@ -52,18 +53,20 @@ Combined horizontal + vertical routing overflow from global routing — the grou
 | Model | NRMSE ↓ | SSIM ↑ | Pearson R ↑ | Params | Time/Epoch | Epochs | Total Time* |
 |-------|---------|--------|-------------|--------|-----------|--------|-------------|
 | SimpleCNN | 0.0489 | 0.6201 | 0.5011 | 186K | ~8 min | 50 | ~400 min |
-| U-Net | 0.0489 | 0.6193 | **0.5016** | 31M | ~18 min | 37 | ~666 min |
+| U-Net | 0.0489 | 0.6193 | 0.5016 | 31M | ~18 min | 37 | ~666 min |
 | GPDL FCN | **0.0488** | 0.6101 | 0.4006 | 25M | ~4.5 min | 22 | ~99 min |
-| **ViT** | 0.0492 | **0.6268** | 0.4724 | 12M | **~3.2 min** | 18 | **~58 min** |
+| ViT | 0.0492 | **0.6268** | 0.4724 | 12M | **~3.2 min** | 18 | **~58 min** |
+| **Attention U-Net** | 0.0491 | 0.6236 | **0.5025** | 36M | ~36 min | 19 | ~686 min |
 
 *\*Trained on Apple M-series GPU (MPS). Total time = time/epoch × epochs trained before early stopping.*
 
 **Key findings:**
-- **ViT achieves the best structural similarity (SSIM = 0.6268)** while being the fastest to train at just 3.2 min/epoch — self-attention captures global chip-level spatial patterns that CNNs miss.
-- **SimpleCNN matches U-Net's Pearson R** with 166× fewer parameters (186K vs 31M), suggesting skip connections provide limited benefit for this task.
-- **GPDL FCN has the worst Pearson R (0.40)** — without skip connections, it loses fine spatial detail in the decoder.
-- All models achieve **NRMSE ~0.049**, indicating the task has a performance floor with these features.
-- **ViT is 5.6× faster per epoch than U-Net** despite having comparable accuracy, making it the best efficiency–performance tradeoff.
+- **Attention U-Net achieves the best Pearson R (0.5025)**, validating our hypothesis that combining U-Net's skip connections with transformer self-attention captures both local detail and global chip-wide patterns.
+- **ViT maintains the best SSIM (0.6268)**, though Attention U-Net is a close second (0.6236) — pure self-attention still has a slight edge on overall spatial structure.
+- **No single model dominates all metrics.** NRMSE values are nearly identical (~0.049), suggesting a performance floor with these input features.
+- **SimpleCNN matches U-Net's Pearson R (~0.50)** with 166× fewer parameters (186K vs 31M), indicating local features dominate this task.
+- **GPDL FCN has the worst Pearson R (0.40)** — comparing it to U-Net proves skip connections meaningfully improve spatial accuracy.
+- **Efficiency vs. accuracy tradeoff:** ViT is the fastest (3.2 min/epoch), while Attention U-Net is the most accurate but 10× slower.
 
 ### Training Curves
 
@@ -79,7 +82,7 @@ Combined horizontal + vertical routing overflow from global routing — the grou
 
 The model correctly identifies congestion hotspots around macro boundaries and in areas with high routing demand. Errors are concentrated in fine-grained details.
 
-## Feature Importance Analysis
+## 🔍 Feature Importance Analysis
 
 Understanding *which placement features matter most* for congestion prediction is as valuable as the prediction itself — it tells chip designers where to focus optimization effort.
 
@@ -107,7 +110,7 @@ RUDY_pin (24.6%) captures where connection demand is concentrated. Plain RUDY (3
 
 Gradient saliency confirms the ablation findings: the model attends most strongly to macro_region (saliency: 0.260) and RUDY_pin (0.196), with minimal attention to RUDY (0.031).
 
-## Practical Impact
+## 🚀 Practical Impact
 
 | Approach | Runtime per Design | Accuracy |
 |----------|-------------------|----------|
@@ -117,7 +120,7 @@ Gradient saliency confirms the ablation findings: the model attends most strongl
 
 Neural network inference is **~360,000× faster** than traditional global routing — enabling real-time congestion feedback during the placement stage, when design changes are still cheap to make. Training is a one-time cost.
 
-## Project Structure
+## 🗂️ Project Structure
 
 ```
 congestion_prediction/
@@ -128,7 +131,8 @@ congestion_prediction/
 │   │   ├── simple_cnn.py         # Baseline CNN
 │   │   ├── unet.py               # U-Net (encoder-decoder + skip connections)
 │   │   ├── gpdl_fcn.py           # GPDL FCN (encoder-decoder, no skips)
-│   │   └── vit_model.py          # Vision Transformer + CNN decoder
+│   │   ├── vit_model.py          # Vision Transformer + CNN decoder
+│   │   └── attention_unet.py     # Novel: U-Net + Transformer bottleneck
 │   ├── dataset.py                # CircuitNet data loader
 │   ├── train.py                  # Training loop with early stopping
 │   ├── evaluate.py               # NRMSE, SSIM, Pearson metrics
@@ -141,7 +145,7 @@ congestion_prediction/
 └── README.md
 ```
 
-## Setup & Reproduction
+## ⚙️ Setup & Reproduction
 
 ### 1. Environment
 
@@ -184,13 +188,13 @@ python src/feature_importance.py --model unet
 python src/visualize.py --model vit
 ```
 
-## References
+## 📚 References
 
 - **CircuitNet:** Chai et al., "CircuitNet: An Open-Source Dataset for Machine Learning in VLSI CAD" (2022). [Paper](https://arxiv.org/abs/2208.01040) | [Website](https://circuitnet.github.io/)
 - **GPDL:** Lin et al., "Global Placement with Deep Learning-Enabled Explicit Routability Optimization" (2021). [Paper](https://arxiv.org/abs/2106.08626)
 - **U-Net:** Ronneberger et al., "U-Net: Convolutional Networks for Biomedical Image Segmentation" (2015). [Paper](https://arxiv.org/abs/1505.04597)
 - **ViT:** Dosovitskiy et al., "An Image is Worth 16x16 Words" (2020). [Paper](https://arxiv.org/abs/2010.11929)
 
-## License
+## 📄 License
 
 MIT License
